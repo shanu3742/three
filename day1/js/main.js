@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {OrbitControls} from './orbit.js'
 //step-1 create scene
 const scene = new THREE.Scene();
 
@@ -14,17 +15,10 @@ const camera = new THREE.PerspectiveCamera(75,2,0.1,1000)
 // step-2 render the scene to  webpage 
 
 const render = new THREE.WebGLRenderer()
-
 //set the canvas size 
 
 render.setSize(window.innerWidth,window.innerHeight)
-
-
-
-
-
 document.body.appendChild(render.domElement);
-
 
 //create a 3d shape 
 
@@ -50,26 +44,42 @@ let  box= createRect(1,1,1,'red')
 let  box1= createRect(0.5,2,0.5,'yellow')
 //step-4 add shape to scene
 
-scene.add(box)
-scene.add(box1)
 
+//group two shape 
 
+const group = new THREE.Group();
+group.add( box );
+group.add( box1);
+scene.add(group)
 
 //now add camera position
 
-camera.position.z=5;
+// camera.position.z=10;
+// camera.position.y=2;
+//we can set camera position 
+camera.position.set(-10,2,10)
 
 
+//width along x-axis 
+//height along y axis 
+//depth along z-axis
 
+// step-3
+//now add material to geometry
+// /add axisHelper
 
+const axisHelper = new THREE.AxesHelper(5)
 
+scene.add(axisHelper)
+//add mouse event to camera like zoomin zoomout  rotate
+
+const orbit = new OrbitControls(camera,render.domElement)
+orbit.update()
 
 function animate() {
 	requestAnimationFrame( animate );
-    box.rotation.x += 0.01;
-	box.rotation.y += 0.01;
-    box1.rotation.x +=0.01;
-    box1.rotation.y +=0.01;
+    group.rotation.x += 0.01;
+	group.rotation.y += 0.01;
 	render.render( scene, camera );
 }
 animate();
