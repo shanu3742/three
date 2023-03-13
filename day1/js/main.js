@@ -13,6 +13,7 @@ const camera = new THREE.PerspectiveCamera(75,2,0.1,1000)
 // 1000 far - farest zoom level for camera
 
 // step-2 render the scene to  webpage 
+scene.fog= new THREE.Fog("gray", 0.015, 50)
 
 const render = new THREE.WebGLRenderer()
 //set the canvas size 
@@ -32,7 +33,8 @@ const createRect = (positionX,positionY,positionZ,color) => {
 // step-3
 //now add material to geometry
 
-const material = new THREE.MeshBasicMaterial({color:color})
+
+const material = new THREE.MeshStandardMaterial({color:color})
 
 //cretae shape using geometry and material 
 
@@ -41,7 +43,7 @@ return box
 }
 
 let  box= createRect(1,1,1,'red')
-let  box1= createRect(0.5,2,0.5,'yellow')
+let  box1= createRect(0.5,10,0.5,'yellow')
 //step-4 add shape to scene
 
 
@@ -60,6 +62,7 @@ scene.add(group)
 camera.position.set(-10,2,10)
 
 
+
 //width along x-axis 
 //height along y axis 
 //depth along z-axis
@@ -76,10 +79,45 @@ scene.add(axisHelper)
 const orbit = new OrbitControls(camera,render.domElement)
 orbit.update()
 
+const planeGeometry = new THREE.PlaneGeometry(30,30);
+const plainMaterial = new THREE.MeshStandardMaterial({color:0xffffff,side:THREE.DoubleSide});
+const plane = new THREE.Mesh(planeGeometry,plainMaterial);
+scene.add(plane)
+
+//rotate the palne to match grid 
+
+plane.rotation.x=-0.5 *Math.PI
+const gridPlane = new THREE.GridHelper(30);
+scene.add(gridPlane)
+
+
+//add sphere 
+
+const SphereGeometry= new THREE.SphereGeometry(4,50,50);
+const sphereMaterial= new THREE.MeshStandardMaterial({color:0xff0000,wireframe:false});
+const sphere = new THREE.Mesh(SphereGeometry ,sphereMaterial);
+sphere.position.set(-10,5,10)
+scene.add(sphere);
+let step=0;
+let speed=0.01
+
+//add ambient light 
+
+
+const ambientLight = new THREE.DirectionalLight(0x0000ff,0.5)
+
+
+scene.add(ambientLight)
+
+const directionalLight = new THREE.DirectionalLight('red',1)
+directionalLight.position.set(-10,-5,10)
+scene.add(directionalLight)
 function animate() {
 	requestAnimationFrame( animate );
     group.rotation.x += 0.01;
 	group.rotation.y += 0.01;
+	step= step+speed;
+	sphere.position.y= 10*Math.abs(Math.sin(step))
 	render.render( scene, camera );
 }
 animate();
